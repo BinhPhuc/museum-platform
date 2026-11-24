@@ -309,7 +309,6 @@ body {
 .welcome-page-title {
   max-width: 20ch;
   margin: auto;
-  font-family: Georgia, "Times New Roman", serif;
   font-size: clamp(2rem, 4.5vw, 4.5rem);
   font-weight: 800;
   line-height: 1.3;

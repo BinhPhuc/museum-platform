@@ -1,86 +1,57 @@
-import { useState, lazy, Suspense } from "react";
-import BookSidebar from "./components/BookSidebar";
+import { useState, useEffect, useRef } from "react";
+import MemorySidebar from "./components/MemorySidebar";
 import WelcomeContent from "./components/WelcomeContent";
-
-const EpubReader = lazy(() => import("./components/EpubReader"));
-const PdfReader = lazy(() => import("./components/PdfReader"));
+import ContentViewer from "./components/ContentViewer";
 import "./App.css";
 
-const isPdf = (book) => book?.file?.toLowerCase().endsWith(".pdf");
-
 export default function App() {
-  const [selectedBook, setSelectedBook] = useState(null);
+  const [selectedItem, setSelectedItem] = useState(null);
   const [isClosing, setIsClosing] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const closeTimer = useRef(null);
 
-  const handleSelectBook = (book) => {
-    if (selectedBook?.id === book.id) return;
-    setSelectedBook(book);
+  useEffect(() => () => clearTimeout(closeTimer.current), []);
+
+  const handleSelectItem = (item) => {
+    clearTimeout(closeTimer.current);
+    setIsClosing(false);
+    setSelectedItem(item);
     setSidebarOpen(false);
   };
 
   const handleCloseReader = () => {
+    clearTimeout(closeTimer.current);
     setIsClosing(true);
-    setTimeout(() => {
-      setSelectedBook(null);
+    closeTimer.current = setTimeout(() => {
+      setSelectedItem(null);
       setIsClosing(false);
     }, 300);
   };
 
   return (
     <div className="app">
-      {/* Header */}
       <header className="app-header">
-        <img src="/icon.png" alt="logo" className="app-logo" />
-        <h1 className="app-title">Vườn Sách</h1>
+        <span className="app-logo museum-logo" aria-hidden="true">📖</span>
+        <h1 className="app-title">TRẠM VĂN</h1>
         <div className="header-spacer" />
-        {selectedBook && (
-          <span className="reading-indicator">
-            Đang đọc: {selectedBook.name}
-          </span>
-        )}
+        {selectedItem && <span className="reading-indicator">Đang xem: {selectedItem.name}</span>}
         <button
           className="sidebar-toggle-btn"
-          onClick={() => setSidebarOpen((v) => !v)}
-          aria-label="Mở danh sách sách"
-        >
-          ☰
-        </button>
+          onClick={() => setSidebarOpen((value) => !value)}
+          aria-label={sidebarOpen ? "Đóng bộ sưu tập" : "Mở bộ sưu tập"}
+          aria-expanded={sidebarOpen}
+          aria-controls="memory-sidebar"
+        >☰</button>
       </header>
-
-      {/* Main layout */}
       <main className="app-main">
-        {/* Mobile overlay */}
-        {sidebarOpen && (
-          <div
-            className="sidebar-overlay"
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
-
-        {/* Left sidebar (30%) */}
-        <div className={`sidebar-wrapper${sidebarOpen ? " sidebar-wrapper--open" : ""}`}>
-          <BookSidebar
-            selectedBook={selectedBook}
-            onSelectBook={handleSelectBook}
-          />
+        {sidebarOpen && <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />}
+        <div id="memory-sidebar" className={`sidebar-wrapper${sidebarOpen ? " sidebar-wrapper--open" : ""}`}>
+          <MemorySidebar selectedItem={isClosing ? null : selectedItem} onSelectItem={handleSelectItem} />
         </div>
-
-        {/* Right content panel (70%) */}
         <div className="content-panel">
-          {!selectedBook ? (
-            <WelcomeContent />
-          ) : (
-            <div
-              className={`reader-panel${isClosing ? " reader-panel--closing" : ""}`}
-            >
-              <Suspense fallback={<div className="pdf-status">Đang tải…</div>}>
-                {isPdf(selectedBook) ? (
-                  <PdfReader book={selectedBook} onClose={handleCloseReader} />
-                ) : (
-                  <EpubReader book={selectedBook} onClose={handleCloseReader} />
-                )}
-              </Suspense>
+          {!selectedItem ? <WelcomeContent /> : (
+            <div className={`reader-panel${isClosing ? " reader-panel--closing" : ""}`}>
+              <ContentViewer key={`${selectedItem.id}:${selectedItem.file}`} item={selectedItem} onClose={handleCloseReader} />
             </div>
           )}
         </div>

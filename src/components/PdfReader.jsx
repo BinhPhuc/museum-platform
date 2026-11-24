@@ -2,10 +2,11 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
+import MemoryHeader from "./MemoryHeader";
 
-pdfjs.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+pdfjs.GlobalWorkerOptions.workerSrc = new URL("pdfjs-dist/build/pdf.worker.min.mjs", import.meta.url).toString();
 
-export default function PdfReader({ book, onClose }) {
+export default function PdfReader({ item, onClose }) {
   const [numPages, setNumPages] = useState(null);
   const [containerWidth, setContainerWidth] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -13,7 +14,7 @@ export default function PdfReader({ book, onClose }) {
 
   const bodyNodeRef = useRef(null);
   const visibleRatios = useRef({});
-  const pageHeights = useRef({});
+  const [pageHeights, setPageHeights] = useState({});
   const wrapperRefs = useRef({});
 
   const bodyRef = useCallback((node) => {
@@ -24,6 +25,7 @@ export default function PdfReader({ book, onClose }) {
       for (const e of entries) setContainerWidth(e.contentRect.width);
     });
     ro.observe(node);
+    return () => ro.disconnect();
   }, []);
 
   const onDocumentLoadSuccess = ({ numPages }) => {
@@ -81,20 +83,14 @@ export default function PdfReader({ book, onClose }) {
   }, [numPages]);
 
   const pageWidth = containerWidth
-    ? Math.min(containerWidth - 48, 900)
+    ? Math.max(1, Math.min(containerWidth - 48, 900))
     : undefined;
 
   const estimatedHeight = pageWidth ? Math.round(pageWidth * 1.414) : 1100;
 
   return (
     <div className="pdf-reader">
-      <div className="reader-header">
-        <button className="back-btn" onClick={onClose}>
-          Quay lại
-        </button>
-        <h2 className="reader-title">{book.name}</h2>
-        <span className="reader-spacer" />
-      </div>
+      <MemoryHeader item={item} onClose={onClose} />
 
       <div className="pdf-body" ref={bodyRef}>
         {numPages && (
@@ -103,11 +99,11 @@ export default function PdfReader({ book, onClose }) {
           </div>
         )}
         <Document
-          file={book.file}
+          file={item.file}
           onLoadSuccess={onDocumentLoadSuccess}
-          loading={<div className="pdf-status">Đang tải PDF…</div>}
+          loading={<div className="viewer-status" role="status">Đang tải PDF…</div>}
           error={
-            <div className="pdf-status pdf-status--error">
+            <div className="viewer-status viewer-status--error" role="alert">
               Không thể tải file PDF.
             </div>
           }
@@ -116,7 +112,7 @@ export default function PdfReader({ book, onClose }) {
             Array.from({ length: numPages }, (_, i) => {
               const pageNum = i + 1;
               const shouldRender = renderSet.has(pageNum);
-              const knownHeight = pageHeights.current[pageNum];
+              const knownHeight = pageHeights[pageNum];
               return (
                 <div
                   key={pageNum}
@@ -131,13 +127,18 @@ export default function PdfReader({ book, onClose }) {
                 >
                   {shouldRender && (
                     <Page
+                      loading={<p className="viewer-status" role="status">Đang tải trang…</p>}
+                      error={<p className="viewer-status viewer-status--error" role="alert">Không thể hiển thị trang PDF.</p>}
                       pageNumber={pageNum}
                       width={pageWidth}
                       renderTextLayer={true}
                       renderAnnotationLayer={true}
                       onRenderSuccess={() => {
                         const el = wrapperRefs.current[pageNum];
-                        if (el) pageHeights.current[pageNum] = el.getBoundingClientRect().height;
+                        if (el) {
+                          const height = el.getBoundingClientRect().height;
+                          setPageHeights((previous) => previous[pageNum] === height ? previous : { ...previous, [pageNum]: height });
+                        }
                       }}
                     />
                   )}

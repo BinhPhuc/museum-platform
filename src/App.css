@@ -1,35 +1,16 @@
 /* =========================================
    Reset & Base
    ========================================= */
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
 :root {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   --color-bg: #f0f4f8;
-  --color-header: #1a202c;
-  --color-header-text: #f7fafc;
-  --color-panel-bg: #ffffff;
-  --color-border: #e2e8f0;
-  --color-accent: #4a90d9;
   --color-text: #2d3748;
-  --color-hint: #718096;
   --header-height: 56px;
   --sidebar-width: 30%;
-  --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body {
   background: var(--color-bg);
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
   color: var(--color-text);
-  height: 100vh;
-  overflow: hidden;
 }
 
 /* =========================================
@@ -38,8 +19,7 @@ body {
 .app {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  background: transparent;
+  height: 100dvh;
 }
 
 /* Header */
@@ -59,7 +39,6 @@ body {
 .app-logo {
   width: 40px;
   height: 40px;
-  object-fit: contain;
   border-radius: 10px;
   filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
   flex-shrink: 0;
@@ -112,6 +91,7 @@ body {
   flex: 1;
   overflow: hidden;
   position: relative;
+  min-height: 0;
 }
 
 /* =========================================
@@ -213,7 +193,7 @@ body {
 
 .sidebar-cat-btn--open {
   background: rgba(255, 255, 255, 0.06);
-  border-left-color: var(--cat-color, #4a90d9);
+  border-left-color: #4a90d9;
 }
 
 .sidebar-cat-icon {
@@ -241,15 +221,15 @@ body {
   transform: rotate(90deg);
 }
 
-/* Book list inside a category */
-.sidebar-books {
+/* Memory list inside a category */
+.sidebar-items {
   list-style: none;
   padding: 4px 0 6px;
   background: rgba(0, 0, 0, 0.15);
 }
 
-/* Book button */
-.sidebar-book-btn {
+/* Memory button */
+.sidebar-item-btn {
   width: 100%;
   display: flex;
   align-items: center;
@@ -262,23 +242,22 @@ body {
   font-size: 13px;
   font-weight: 400;
   text-align: left;
-  transition: background 0.18s, color 0.18s;
   border-left: 3px solid transparent;
 }
 
-.sidebar-book-btn:hover {
+.sidebar-item-btn:hover {
   background: rgba(255, 255, 255, 0.08);
   color: #fff;
 }
 
-.sidebar-book-btn--active {
+.sidebar-item-btn--active {
   background: rgba(46, 125, 34, 0.35);
   color: #c5f0a0;
   border-left-color: #66bb6a;
   font-weight: 600;
 }
 
-/* Book thumbnail */
+/* Format badge */
 .sidebar-thumb {
   flex-shrink: 0;
   width: 36px;
@@ -290,27 +269,7 @@ body {
   justify-content: center;
 }
 
-.sidebar-thumb--img {
-  object-fit: cover;
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
-}
-
-.sidebar-thumb--pdf {
-  background: linear-gradient(160deg, #d32f2f, #b71c1c);
-  color: #fff;
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
-  border-radius: 3px;
-}
-
-.sidebar-thumb--fallback {
-  font-size: 22px;
-  line-height: 1;
-}
-
-.sidebar-book-name {
+.sidebar-item-name {
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -340,107 +299,35 @@ body {
    ========================================= */
 .welcome-page {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 40px 24px 48px;
-  background: linear-gradient(rgba(255,255,255,0.55), rgba(255,255,255,0.55)), url('/bg.png') center/cover no-repeat;
-}
-
-.welcome-page-inner {
-  width: 100%;
-  max-width: 520px;
-}
-
-.welcome-page-header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 28px;
-}
-
-.welcome-page-icon {
-  font-size: 52px;
-  line-height: 1;
-  flex-shrink: 0;
+  padding: 32px 24px;
+  background: linear-gradient(rgba(255,255,255,0.55), rgba(255,255,255,0.55)), url('/bg.webp') center/cover no-repeat;
 }
 
 .welcome-page-title {
-  font-size: 22px;
-  font-weight: 700;
-  color: #1a3a12;
-  margin-bottom: 4px;
-}
-
-.welcome-page-subtitle {
-  font-size: 14px;
-  color: var(--color-hint);
-}
-
-.welcome-page-steps {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 28px;
-}
-
-.welcome-page-step {
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  padding: 14px 16px;
-  background: #fff;
-  border-radius: 10px;
-  border-left: 3px solid #2e7d22;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
-}
-
-/* Shared step styles (also used by welcome-page) */
-.step-icon {
-  font-size: 22px;
-  flex-shrink: 0;
+  max-width: 20ch;
+  margin: auto;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2rem, 4.5vw, 4.5rem);
+  font-weight: 800;
   line-height: 1.3;
-}
-
-.step-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: #1a3a12;
-  display: block;
-  margin-bottom: 3px;
-}
-
-.step-desc {
-  font-size: 13px;
-  color: #4a5568;
-  line-height: 1.5;
-}
-
-/* HCM Quote */
-.hcm-quote {
+  letter-spacing: 0.045em;
   text-align: center;
-  font-size: 18px;
-  font-style: italic;
-  border: none;
+  text-wrap: balance;
+  color: #1d4328;
+  text-shadow: 0 2px 16px rgba(255, 255, 255, 0.85);
 }
 
-.hcm-quote--welcome {
-  padding: 20px 16px;
-  background: linear-gradient(135deg, #1a4a12, #2e7d22);
-  border-radius: 12px;
-  color: #e8f5e9;
-  box-shadow: 0 4px 16px rgba(46, 125, 34, 0.25);
-}
-
-.hcm-quote--welcome cite {
+.welcome-page-title::after {
+  content: "";
   display: block;
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 600;
-  color: #c5f0a0;
-  margin-top: 8px;
+  width: 96px;
+  height: 3px;
+  margin: 24px auto 0;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, #a87930, transparent);
 }
 
 /* =========================================
@@ -454,11 +341,6 @@ body {
   background: transparent;
   overflow: hidden;
   animation: slideInRight 0.3s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
 }
 
 @keyframes slideInRight {
@@ -485,29 +367,6 @@ body {
 
 .reader-panel--closing {
   animation: slideOutRight 0.3s ease forwards;
-}
-
-@keyframes pageFlash {
-  0%   { opacity: 0.35; }
-  100% { opacity: 0; }
-}
-
-.page-turn-overlay {
-  position: absolute;
-  inset: 0;
-  background: #fff;
-  pointer-events: none;
-  z-index: 10;
-  animation: pageFlash 0.2s ease-out forwards;
-}
-
-/* =========================================
-   Epub Reader
-   ========================================= */
-.epub-reader {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
 }
 
 .reader-header {
@@ -552,82 +411,6 @@ body {
   flex: 1;
 }
 
-.reader-body {
-  flex: 1;
-  position: relative;
-  overflow: hidden;
-}
-
-.reader-body > div {
-  height: 100%;
-}
-
-/* =========================================
-   PDF Reader
-   ========================================= */
-.pdf-reader {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.pdf-body {
-  flex: 1;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 24px;
-  background: rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-}
-
-.pdf-body .react-pdf__Document {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.pdf-body .react-pdf__Page {
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
-}
-
-.pdf-page-wrapper {
-  display: flex;
-  justify-content: center;
-}
-
-.pdf-page-badge {
-  position: sticky;
-  top: 12px;
-  z-index: 10;
-  align-self: flex-end;
-  margin-right: 16px;
-  margin-bottom: -40px;
-  padding: 4px 12px;
-  background: rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #e8f5e9;
-  pointer-events: none;
-  user-select: none;
-}
-
-.pdf-status {
-  color: #ccc;
-  font-size: 15px;
-  padding: 40px;
-  text-align: center;
-}
-
-.pdf-status--error {
-  color: #ff6b6b;
-}
-
 /* =========================================
    Mobile Responsive
    ========================================= */
@@ -663,18 +446,60 @@ body {
   }
 
   .welcome-page {
-    padding: 24px 16px 36px;
-  }
-
-  .welcome-page-title {
-    font-size: 18px;
-  }
-
-  .welcome-page-icon {
-    font-size: 40px;
+    padding: 24px 20px;
   }
 
   .reading-indicator {
     display: none;
   }
 }
+
+/* Memory archive viewers */
+.museum-logo { display: grid; place-items: center; font-size: 30px; }
+.sidebar-thumb--format { font-size: 9px; font-weight: 700; color: white; background: #465c71; }
+.sidebar-thumb--video { background: #714d82; }
+.sidebar-thumb--image { background: #326f62; }
+.sidebar-thumb--docx { background: #2d5c9a; }
+.content-type-label { display: block; font-size: 10px; opacity: .8; margin-top: 3px; }
+.memory-viewer { display: flex; flex-direction: column; height: 100%; min-height: 0; background: #edf0eb; }
+.download-link { color: #e8f5e9; font-size: 12px; white-space: nowrap; text-underline-offset: 3px; }
+.media-body { flex: 1; min-height: 0; overflow: auto; padding: 24px; display: flex; flex-direction: column; align-items: center; gap: 18px; background: #15231d; }
+.memory-video, .memory-image { display: block; max-width: 100%; max-height: calc(100dvh - 210px); flex-shrink: 0; object-fit: contain; }
+.memory-video { width: 100%; background: #000; }
+.memory-image { width: auto; height: auto; }
+.memory-video[hidden], .memory-image[hidden] { display: none; }
+.memory-description { color: #e0e8df; max-width: 750px; line-height: 1.6; text-align: center; overflow-wrap: anywhere; }
+.viewer-status { color: #344b3c; padding: 24px; text-align: center; line-height: 1.6; }
+.media-body .viewer-status, .reader-panel > .viewer-status { color: #e8f5e9; background: #203528; }
+.viewer-status--error, .media-body .viewer-status--error { color: #922929; background: #fff0ec; }
+.docx-body { flex: 1; min-height: 0; overflow: auto; padding: 24px; }
+.docx-content { background: #fff; color: #26332b; max-width: 900px; margin: 0 auto; padding: 36px; line-height: 1.8; overflow-wrap: anywhere; box-shadow: 0 2px 12px #0001; overflow-x: auto; }
+.docx-content p, .docx-content ul, .docx-content ol, .docx-content table { margin: 0 0 1em; }
+.docx-content h1, .docx-content h2, .docx-content h3 { line-height: 1.4; margin: 1em 0 .5em; }
+.docx-content ul, .docx-content ol { padding-left: 1.5em; }
+.docx-content img { max-width: 100%; height: auto; }
+.docx-content table { border-collapse: collapse; width: 100%; }
+.docx-content td, .docx-content th { border: 1px solid #cbd5c9; padding: 8px; }
+.docx-content a { color: #245a9a; text-decoration: underline; }
+button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid #e3b663; outline-offset: 2px; }
+@media (max-width: 768px) {
+  .app-title { font-size: 17px; }
+  .app-header { padding: 0 12px; gap: 10px; }
+  .media-body, .docx-body { padding: 14px; }
+  .docx-content { padding: 20px 16px; }
+  .reader-header { padding: 10px; gap: 10px; }
+  .reader-title { flex: 1; min-width: 0; }
+  .reader-spacer { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+
+/* PDF reader */
+.sidebar-thumb--pdf { background: #a43838; }
+.pdf-reader { display: flex; flex-direction: column; height: 100%; min-height: 0; background: #edf0eb; }
+.pdf-body { flex: 1; min-height: 0; overflow: auto; padding: 24px; background: #dce2db; }
+.pdf-body .react-pdf__Document { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.pdf-body .react-pdf__Page { box-shadow: 0 2px 12px #0002; }
+.pdf-page-wrapper { display: flex; justify-content: center; }
+.pdf-page-badge { position: sticky; top: 8px; z-index: 10; width: fit-content; margin-left: auto; margin-bottom: 12px; padding: 4px 12px; border-radius: 20px; background: #203528; color: #e8f5e9; font-size: 13px; pointer-events: none; }
